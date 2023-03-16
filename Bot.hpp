@@ -48,7 +48,7 @@ public:
 		ircServATTR.sin_port = htons(destPort);
 		memset(ircServATTR.sin_zero, 0, 8);
 
-		if (connect(sockFD, reinterpret_cast<sockaddr *>(&ircServATTR), sizeof(ircServATTR)) <= 0)
+		if (connect(sockFD, reinterpret_cast<sockaddr *>(&ircServATTR), sizeof(ircServATTR)) < 0)
 			throw std::runtime_error(strerror(errno));
 	}
 	/*

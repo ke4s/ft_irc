@@ -18,6 +18,10 @@
 #include "Client.hpp"
 using namespace std;
 
+
+//şu an bot'a mesaj gönderemiyor. Bot'u program içinden de çalıştıramıyorum. Debug modunda inceleme gerek.
+
+
 class Server
 {
 private:
@@ -73,6 +77,9 @@ public:
 
 		if (listen(serverSockFD, backlog) < 0)
 			throw std::runtime_error("Listening error");
+		//char *pwd = getcwd(NULL, 0);
+
+		//execl(::strcat(getcwd(NULL, 0), "Bot"), "127.0.0.1", "6667", "badWords.txt");
 	}
 
 	void start()
@@ -99,8 +106,8 @@ public:
 				{
 					if (it->fd == serverSockFD)
 						clientConnect();
-					//else
-						//clientSendingMSG();
+					else
+						clientSendingMSG(it->fd);
 					break;
 				}
 			}
@@ -151,6 +158,18 @@ public:
 			}
 		}
 		close(fd);
+	}
+
+	void clientSendingMSG(int fd)
+	{
+		char *buff = (char *)malloc(512);
+		if (recv(fd, buff, 512, 0) < 0)
+			throw std::runtime_error("Recv error");
+
+		for (pollfds_it it = ++(pollfds.begin()); it < pollfds.end(); ++it)
+		{
+			send(it->fd, buff, ::strlen(buff), 0);
+		}
 	}
 
 	const int& getFd() { return serverSockFD; }

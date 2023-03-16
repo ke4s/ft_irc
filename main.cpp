@@ -1,17 +1,18 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+
 #include <string.h>
 #include <iostream>
-#include <stdlib.h>
 
 
+#include "Server.hpp"
+
+
+
+using namespace std;
 /*
 
 İki bilgisayar arası haberleşme için her iki bilgisayarında soket yolunu socket fonksiyonu ile açması gerekir.
 
- int socket(int domain, int type, int protocol);
+int socket(int domain, int type, int protocol);
     Domain parametresi AF_UNIX (Unix dosyası), AF_INET (IPv4), AF_INET6 (IPv6)
     Type parametresi ise SOCK_STREAM (TCP), SOCK_DGRAM (UDP), SOCK_RAW sabitlerini alır.
     Protocol parametresi de genellikle 0 değerini verilir. 0 default olarak sistemdekini çeker IPPROTO_TCP = TCP transport protocol
@@ -21,9 +22,7 @@ Sunucu veya alıcı temel olarak belirlenen port adresine gelen istekleri dinler
 
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 
-
-
-    int accept(int sockfd, struct sockaddr *addr , socklen_t *addrlen);
+int accept(int sockfd, struct sockaddr *addr , socklen_t *addrlen);
     Fonksiyonun ilk parametresi socket fonksiyonu ile oluşturulan değeri, ikinci parametresi bağlanacak istemcinin bilgilerinin tutulduğu veri yapısını, son parametre ise bu bilgilerin boyutunu alır.
     Burada biraz kafalar karışabilir.
     Çünkü accept fonksiyonu socket fonksiyonu gibi yeni bir yol oluşturur.
@@ -118,12 +117,42 @@ int accept(int sockfd, void *addr, int *addrlen);
 	flags parametresini 0 olarak bırakabilirsiniz. (Bu parametre ile ilgili ayrıntılı bilgi için bkz. send() man sayfası.) send() değer olarak gönderilen bayt miktarını döndü
  int recv(int sockfd, void *buf, int len, unsigned int flags);
 
- 
+
+
+int	poll(struct pollfd fds[], nfds_t nfds, int timeout);
+struct pollfd {
+int    fd;       // file descriptor
+short  events;   // events to look for
+short  revents;  // events returned
+};
+
+
 */
 
 
+int main(int ac, char **argv)
+{
+	//argcheck
+
+	try
+	{
+		char banFile[] = "bannedIPS.txt";
+		Server server(atoi(argv[1]), argv[2], banFile);
+
+		server.binding();
+		server.listenSock(5);
+		server.start();
+	}
+	catch (exception &e)
+	{
+		cout << e.what() << endl;
+	}
+
+}
 
 
+
+/*
 int main(int argc, char *argv[])
 {
 
@@ -203,4 +232,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
+*/

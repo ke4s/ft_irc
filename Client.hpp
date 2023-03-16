@@ -4,7 +4,9 @@
 #include <string>
 #include <map>
 #include "Channel.hpp"
+
 using namespace std;
+
 #define STATE_PASS 1
 #define STATE_NICK 2
 #define STATE_USER 3
@@ -19,8 +21,8 @@ private:
 	string	nickName;
 	string	fullName;
 
-	short int state;
-	bool			isRegistered;
+	short int	state;
+	bool		isRegistered;
 
 	map<string, Channel*>	joinedChannels;
 

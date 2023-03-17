@@ -166,9 +166,12 @@ public:
 		if (recv(fd, buff, 512, 0) < 0)
 			throw std::runtime_error("Recv error");
 
+		string to_send = buff;
+
 		for (pollfds_it it = ++(pollfds.begin()); it < pollfds.end(); ++it)
 		{
-			send(it->fd, buff, ::strlen(buff), 0);
+			if (it->fd != fd)
+				send(it->fd, buff, ::strlen(buff), 0);
 		}
 	}
 

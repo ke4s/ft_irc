@@ -50,6 +50,8 @@ public:
 
 		if (connect(sockFD, reinterpret_cast<sockaddr *>(&ircServATTR), sizeof(ircServATTR)) < 0)
 			throw std::runtime_error(strerror(errno));
+		if (send(sockFD, "Send\n", 5, 0) < 0)
+			throw std::runtime_error("send error");
 	}
 	/*
 	void binding(void)
@@ -85,13 +87,19 @@ public:
 		string badWord;
 		while (1)
 		{
-			if (recv(sockFD, buff, strlen(buff), 0))
-				throw std::runtime_error(strerror(errno));
-			if ((badWord = checkWordsInFile(dictionary, buff)).length() != 0)
+			::memset(buff, 0, ::strlen(buff));
+			if (recv(sockFD, buff, 512, 0) < 0)
+				throw std::runtime_error("recv error");
+			std::cout << "Data from SERVER:" << buff << endl;
+			if ((badWord = checkWordsInFile(dictionary, buff)).length() > 1)
 			{
-				string banMessage = buff + badWord;
-				if (send(sockFD, buff, banMessage.length(), 0) < 0)
-					throw std::runtime_error(strerror(errno));
+				string banMessage = "\tBOT: BAN <USER>.\n\tREASON: USING BAD WORD : ";
+				banMessage.append(badWord + "\n\r");
+				if (send(sockFD, banMessage.c_str(), banMessage.length(), 0) < 0)
+					throw std::runtime_error("send error");
+				std::cout << "Data send from socket:\n" << banMessage;
+				badWord.erase(badWord.begin(), badWord.end());
+				banMessage.clear();
 			}
 		}
 	}

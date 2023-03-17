@@ -17,6 +17,10 @@
 
 #include "Client.hpp"
 #include "Channel.hpp"
+
+#include "Commands.hpp"
+#include "CommandCenter.hpp"
+class CommandCenter;
 using namespace std;
 
 
@@ -79,9 +83,6 @@ public:
 
 		if (listen(serverSockFD, backlog) < 0)
 			throw std::runtime_error("Listening error");
-		//char *pwd = getcwd(NULL, 0);
-
-		//execl(::strcat(getcwd(NULL, 0), "Bot"), "127.0.0.1", "6667", "badWords.txt");
 	}
 
 	void start()

@@ -8,10 +8,10 @@
 #include <vector>
 #include <map>
 #include <sstream>
-#include "../Source/Library/Server.hpp"
-#include "../Source/Library/Commands.hpp"
-#include "../Source/Library/Client.hpp"
-#include "../Source/Library/Channel.hpp"
+#include "Server.hpp"
+#include "Commands.hpp"
+#include "Client.hpp"
+#include "Channel.hpp"
 
 
 class CommandCenter

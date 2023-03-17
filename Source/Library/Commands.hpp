@@ -4,17 +4,20 @@
 #include <numeric>
 #include <regex>
 
+#include "Server.hpp"
+class Server;
+
 class Commands
 {
 	protected:
 		Server *server;
-		bool control;
+		bool _control;
 
 	public:
-		explicit Commands(Server *server, bool control = true) : server(server), control(control){};
+		explicit Commands(Server *server, bool control = true) : server(server), _control(control){};
 		virtual ~Commands(){};
 
-		bool control() const { return control; };
+		bool control() const { return _control; };
 
 		virtual void execute(Client *client, std::vector<std::string> arguments) = 0;
 };

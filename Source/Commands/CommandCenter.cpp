@@ -1,4 +1,4 @@
-#include "../Source/Library/CommandCenter.hpp"
+#include "../Library/CommandCenter.hpp"
 
 CommandCenter::CommandCenter(Server *server) : server(server)
 {
@@ -56,7 +56,6 @@ void CommandCenter::CommandCatcher(Client *client, const std::string &message)
 				client->reply(ERR_NOTREGISTERED(client->getNickname()));
 				return;
 			}
-
 			command->execute(client, arguments);
 		}
 		catch (const std::out_of_range &e)

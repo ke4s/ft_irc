@@ -21,54 +21,54 @@ using namespace std;
 class Client
 {
 private:
-	int		sockFD;
-	struct sockaddr_in sockATTR;
+	int		_sockFD;
+	struct sockaddr_in _sockATTR;
 
-	string	nickName;
-	string	fullName;
-	string	password;
-	short int	state;
-	bool		isRegistered;
-	bool		isBot;
+	string	_nickName;
+	string	_fullName;
+	string	_password;
+	short int	_state;
+	bool		_isRegistered;
+	bool		_isBot;
 
 	map<string, Channel*>	joinedChannels;
 
 
 public:
-	Client(const int fd, struct sockaddr_in attr) : sockFD(fd), sockATTR(attr)
+	Client(const int fd, struct sockaddr_in attr) : _sockFD(fd), _sockATTR(attr)
 	{
-		state = STATE_PASS;
-		isRegistered = false;
-		isBot = false;
+		_state = STATE_PASS;
+		_isRegistered = false;
+		_isBot = false;
 	}
 
 	int RecieveMessage(string message)
 	{
-		if (state == STATE_PASS)
+		if (_state == STATE_PASS)
 		{
-			GetPASS(message);
+			isBOT(message);
 			return MSG_LOGIN;
 		}
 		return MSG_ALL;
 	}
 
-	void GetPASS(string message)
+	void isBOT(string message)
 	{
+		string word;
 		if (message == BOT_KEY)
 		{
-			isBot = 1;
-			state = STATE_BOT;
+			_isBot = 1;
+			_state = STATE_BOT;
 			cout << "BOT GELDİ CNM" << endl;
-		}
-		else if (message.find("PASS") == 0)
-		{
-			state = message.find(password, 5) == 5 ? STATE_JOIN : STATE_PASS;
-			cout << message << state << endl;
 		}
 	}
 
+	const bool& isRegistered(void)
+	{
+		return _isRegistered;
+	}
 
 	const struct sockaddr_in& getATTR(void)
-	{ return sockATTR; }
+	{ return _sockATTR; }
 
 };

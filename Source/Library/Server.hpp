@@ -16,6 +16,7 @@
 #include <fstream>
 
 #include "Client.hpp"
+#include "Channel.hpp"
 using namespace std;
 
 
@@ -28,6 +29,7 @@ private:
 
 	typedef std::vector<struct pollfd>::iterator pollfds_it;
 	typedef std::map<int, Client*>::iterator clients_it;
+	CommandCenter *commandcenter;
 
 	int					serverSockFD;
 	string				password;

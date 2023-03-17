@@ -12,6 +12,9 @@
 
 #include <fstream>
 
+#define BOT_KEY   "8037cf0192cfc4a19e9c5ad482c8fa7ede6f8ba26aa8a091f53dc3e42b6d09a7"
+
+
 using namespace std;
 
 class Bot
@@ -50,7 +53,7 @@ public:
 
 		if (connect(sockFD, reinterpret_cast<sockaddr *>(&ircServATTR), sizeof(ircServATTR)) < 0)
 			throw std::runtime_error(strerror(errno));
-		if (send(sockFD, "Send\n", 5, 0) < 0)
+		if (send(sockFD, BOT_KEY, ::strlen(BOT_KEY), 0) < 0)
 			throw std::runtime_error("send error");
 	}
 	/*

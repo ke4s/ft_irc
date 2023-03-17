@@ -167,11 +167,12 @@ public:
 			throw std::runtime_error("Recv error");
 
 		string to_send = buff;
-
-		for (pollfds_it it = ++(pollfds.begin()); it < pollfds.end(); ++it)
+		if (clients.find(fd)->second->RecieveMessage(buff) == MSG_ALL)
 		{
-			if (it->fd != fd)
-				send(it->fd, buff, ::strlen(buff), 0);
+			for (pollfds_it it = ++(pollfds.begin()); it < pollfds.end(); ++it) {
+				if (it->fd != fd)
+					send(it->fd, buff, ::strlen(buff), 0);
+			}
 		}
 	}
 

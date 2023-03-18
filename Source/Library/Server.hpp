@@ -60,7 +60,7 @@ public:
 			throw std::runtime_error("Error while setting socket to NON-BLOCKING.");
 
 		server_attr.sin_family = AF_INET; //IPV4
-		server_attr.sin_addr.s_addr = htons(INADDR_ANY);//bu tanım bulunduğu bilgisayarın ip adresini almasını söyler //inet_addr("127.0.0.1"); // htonl(INADDR_ANY)  INADDR_ANY sabitinin mesela 12 olarak belirlendiği durumlarda işe yarar.
+		server_attr.sin_addr.s_addr = inet_addr("10.11.41.5");//bu tanım bulunduğu bilgisayarın ip adresini almasını söyler //inet_addr("127.0.0.1"); // htonl(INADDR_ANY)  INADDR_ANY sabitinin mesela 12 olarak belirlendiği durumlarda işe yarar.
 		std::cout << port << password << "\n";
 		server_attr.sin_port = htons(port);
 		this->password = password;
@@ -88,11 +88,11 @@ public:
 	void start()
 	{
 		//server is ready.
-		cout << "Server is ready" << endl;
+ 		cout << "Server is ready" << endl;
 		while (1) // running değişkeni kullan
 		{
 
-			if (poll(pollfds.begin().base(), pollfds.size(), 10) < 0)
+			if (poll(pollfds.begin().base(), pollfds.size(), -1) < 0)
 				throw	std::runtime_error("Error while polling from fd.\n");
 			
 			for (pollfds_it it = pollfds.begin(); it != pollfds.end(); it++)
@@ -110,7 +110,7 @@ public:
 					if (it->fd == serverSockFD)
 						clientConnect();
 					else
-						clientSendingMSG(it->fd);
+					 	clientSendingMSG(it->fd);
 					break;
 				}
 			}
@@ -138,7 +138,7 @@ public:
 		else
 		{
 			pollfds.push_back(newPollfd(newClientFD, POLL_IN, 0));
-			clients.insert(make_pair(newClientFD, new Client(newClientFD, newClientATTR)));
+			clients.insert(make_pair(newClientFD, new Client(newClientFD, newClientATTR, password)));
 			cout << inet_ntoa(newClientATTR.sin_addr) << ":" << ntohs(newClientATTR.sin_port) << " Client connected to server" << endl;
 		}
 	}
@@ -163,6 +163,103 @@ public:
 		close(fd);
 	}
 
+	struct sendingTo
+	{
+		int		recvFD;
+		int		sendFD;
+		Channel *chan;
+		bool	login;
+		sendingTo() : recvFD(0), sendFD(0), chan(NULL), login(0) {}
+	};
+	enum CommandType
+	{
+		E_Server = 0,
+		E_Message = 1
+	};
+
+	/*
+	CommandType WhatKindOfCommand(string message)
+	{
+		string command = message.substr(0, message.find_first_of(' '));
+
+		if (message == "NICK" || message == "USER" || message == "JOIN" || message == "PART")
+			return E_Server;
+		return E_Message;
+	}
+*/
+
+	int isBot(string message,Client *recvClient)
+	{
+		string word;
+		if (message == BOT_KEY)
+		{
+			recvClient->_isBot = 1;
+			recvClient->_state = STATE_BOT;
+			recvClient->_isRegistered = 1;
+			cout << "BOT AKTİF" << endl;
+			return 1;
+		}
+		return 0;
+	}
+
+	string get_first_word(string buff)
+	{
+		string first_word = buff.substr(0, (buff.find_first_of(' ') != string::npos ? buff.find_first_of(' ') : buff.length()) );
+		if (first_word.find("\n\r") != string::npos)
+		{
+			first_word.erase(first_word.find("\n\r"), 2);
+		}
+		return first_word;
+	}
+
+	int executeLOGIN(string message, Client *recvClient)
+	{
+		string command = get_first_word(message);
+		if (command == "PASS")
+		{
+			if (recvClient->_state == STATE_PASS)
+			{
+				int pos = message.find_first_not_of(' ', command.length());
+				string recv_password = message.substr(pos, message.length() - pos - 2);
+				cout << recv_password << endl;
+				if (recv_password == password)
+				{
+					recvClient->_state = STATE_NICK;
+					cout <<  "Somebody Registered" << endl;
+					recvClient->_isRegistered = 1; //test amaclı
+				}
+			}
+			else
+			{
+				send(recvClient->_sockFD, "You are already PASSED", 23, 0);
+			}
+			return MSG_LOGIN;
+		}
+		return MSG_ALL;
+
+	}
+
+	int RecieveMessage(string message, Client *recvClient)
+	{
+		if (isBot(message, recvClient))
+			return MSG_LOGIN;
+		string command = message.substr(0, message.find_first_of(' '));
+		if (command == "PASS" || command == "NICK") // command find
+		{
+			return executeLOGIN(message, recvClient);
+			return MSG_LOGIN;
+		}
+		else if (command == "PRIVMSG")
+		{
+			return MSG_PRIV;
+		}
+		else if (command == "QUIT" || command == "KICK" || command == "PART")
+		{
+			return MSG_EVENT;
+		}
+		return MSG_ALL;
+	}
+
 	void clientSendingMSG(int fd)
 	{
 		char *buff = (char *)malloc(512);
@@ -170,10 +267,26 @@ public:
 			throw std::runtime_error("Recv error");
 
 		string to_send = buff;
-		if (clients.find(fd)->second->RecieveMessage(buff) == MSG_ALL)
+		cout << inet_ntoa(this->server_attr.sin_addr) << ":" << ntohs(this->server_attr.sin_port) << ": " << buff << endl;
+		/*
+		string received = buff;
+
+		CommandType type = WhatKindOfCommand(received);
+
+		if (type == E_Server)
+		{
+			sendingTo temp;
+		}
+		*/
+		Client *recvClient = clients.find(fd)->second;
+		int msgType = RecieveMessage(to_send, recvClient);
+		if (msgType == MSG_LOGIN)
+			return ;
+
+		if (msgType == MSG_ALL && clients.find(fd)->second->isRegistered())
 		{
 			for (pollfds_it it = ++(pollfds.begin()); it < pollfds.end(); ++it) {
-				if (it->fd != fd)
+				if (it->fd != fd && clients.find(it->fd)->second->isRegistered())
 					send(it->fd, buff, ::strlen(buff), 0);
 			}
 		}

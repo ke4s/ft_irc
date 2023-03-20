@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-#include "Source/Library/Server.hpp"
+#include "Includes/Server.hpp"
 
 
 
@@ -129,6 +129,13 @@ short  revents;  // events returned
 
 */
 
+/*
+
+ Selam Chatgpt. Kendime bir clientların bağlanıp sohbet edebileceği bir server yazıyorum. C++'da socketleri kullanmak yapıyorum. Biliyorsunki recv() ve send() fonksiyonları ile veri aktarımı ile yapıyorum. İlginç bir sorunum var. Kendi birligsayarımdan server'a netcat ile bağlandığımda yazdığım mesaj tek parça halinde sonunda \n ile gidiyor. Ama başka bilgisayardan bağlanıp gönderdiğimde mesajın sonundaki \n ayrı gönderiliyor. Bunun çözümü nedir
+
+ */
+
+
 
 int main(int ac, char **argv)
 {
@@ -141,7 +148,7 @@ int main(int ac, char **argv)
 
 		server.binding();
 		server.listenSock(5);
-		server.start();
+		server.acceptingRequest();
 	}
 	catch (exception &e)
 	{

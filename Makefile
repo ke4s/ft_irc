@@ -1,35 +1,34 @@
 NAME = ircserv
 
-C++ = g++
+C++ = c++
 
 FLAGS = -Wall -Werror -Wextra -std=c++98
 
-#SRC = $(shell find . -type f -name "*.cpp")
+SRC_SERV =	main.cpp \
+			Sources/Server/Server.Connection.cpp \
+			Sources/Server/Server.Senders.cpp \
+			Sources/Server/Server.Setup.cpp \
+			Sources/Server/Server.Utils.cpp \
 
-SRC_SERV = main.cpp
 
-SRC_BOT = Bot/Bot.cpp
+SRC_BOT =	BotResources/main.cpp \
+			BotResources/Bot.cpp
 
-all: ircserv botp
+all:	$(SRC_SERV) $(SRC_BOT) ircserv bot
 
-ircserv: $(SRC_SERV)
+ircserv:	$(SRC_SERV)
 	c++ $(SRC_SERV) -o ircserv
 
-botp: $(SRC_BOT)
-	c++ $(SRC_BOT) -o botp
-
-#OBJ = $(SRC:.cpp=.o)
+bot:	$(SRC_BOT)
+	c++ $(SRC_BOT) -o bot
 
 
-#all : $(NAME)
+clean :
+		rm -rf $(NAME) bot
 
-#$(NAME)	: $(OBJ)
-#		$(C++) $(FLAGS) $(OBJ) -o $(NAME)
-
-#clean :
-#		rm -rf $(OBJ)
-
+fclean : clean
+		@echo Cleaning %100
 
 re : fclean all
 
-.PHONY : all clean fclean re botp
+.PHONY : all clean fclean re

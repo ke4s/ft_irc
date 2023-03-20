@@ -19,12 +19,10 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
-#include "Commands.hpp"
-#include "CommandCenter.hpp"
+
 #include "Utils.hpp"
 #include "IRC_COMMAND.hpp"
 
-class CommandCenter;
 using namespace std;
 
 
@@ -38,9 +36,6 @@ typedef std::map<int, Client*>::iterator clients_it;
 class Server
 {
 private:
-
-	CommandCenter *commandcenter;
-
 	int					serverSockFD;
 	string				password;
 	struct sockaddr_in	server_attr;

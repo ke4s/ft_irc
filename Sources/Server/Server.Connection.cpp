@@ -22,6 +22,8 @@ void	Server::clientConnect()
 		pollfds.push_back(newPollfd(newClientFD, POLL_IN, 0));
 		clients.insert(make_pair(newClientFD, new Client(newClientFD, newClientATTR, password)));
 		cout << inet_ntoa(newClientATTR.sin_addr) << ":" << ntohs(newClientATTR.sin_port) << " Client connected to server" << endl;
+		string welcome_msg = RPL_WELCOME(string("ircserv"));
+		send(newClientFD, welcome_msg.c_str(), welcome_msg.length(), 0);
 	}
 }
 
@@ -30,6 +32,7 @@ void Server::clientDisconnect(int fd)
 	clients_it it_client = clients.find(fd);
 
 	cout << inet_ntoa(it_client->second->getATTR().sin_addr) << ":" << ntohs(it_client->second->getATTR().sin_port) << " Client Disconnected" << endl;
+
 
 	delete it_client->second;
 	clients.erase(it_client);

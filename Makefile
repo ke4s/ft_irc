@@ -7,6 +7,7 @@ FLAGS = -Wall -Werror -Wextra -std=c++98
 SRC_SERV =	main.cpp \
 			Sources/Server/Server.Connection.cpp \
 			Sources/Server/Server.Senders.cpp \
+			Sources/Server/Server.CommandHandler.cpp \
 			Sources/Server/Server.Setup.cpp \
 			Sources/Server/Server.Utils.cpp \
 

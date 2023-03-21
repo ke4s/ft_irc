@@ -10,8 +10,10 @@ using namespace std;
 #define STATE_PASS 1
 #define STATE_NICK 2
 #define STATE_USER 3
-#define STATE_JOIN 4
-#define STATE_BOT  5
+#define STATE_REGISTERED 4
+#define STATE_JOIN 5
+
+#define STATE_BOT  6
 
 #define MSG_LOGIN 12
 #define MSG_EVENT 14
@@ -28,6 +30,8 @@ public:
 
 	string	_nickName;
 	string	_fullName;
+	string	_hostName;
+	string	_serverName;
 	string	_password;
 	short int	_state;
 	bool		_isRegistered;

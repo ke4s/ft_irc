@@ -32,7 +32,6 @@ using namespace std;
 typedef std::vector<struct pollfd>::iterator pollfds_it;
 typedef std::map<int, Client*>::iterator clients_it;
 
-
 class Server
 {
 private:
@@ -40,8 +39,16 @@ private:
 	string				password;
 	struct sockaddr_in	server_attr;
 
+	int	bot_fd;
+
 	vector<struct pollfd>		pollfds;
 	map<int, Client*>			clients;
+
+	//map<channel name, pair<admin Client*, channel topic> > if channels has another attributes we have to change pair to vector or channel class or something.
+	map<string, pair<Client*, string> >	channels;
+
+	//multimap<channel name, member Client's pointer>
+	multimap<string, Client*>	channel_members;
 
 	string banFile;
 
@@ -67,11 +74,13 @@ private:
 
 	void clientSendingMSG(int fd);
 
-	int sendHUB(string message, Client *recvClient);
-	int clientLOGIN(const vector<string>& splited_message, Client *recvClient);
+	void sendHUB(string message, Client *recvClient);
+	void clientLOGIN(const vector<string>& splited_message, Client *recvClient);
+	void clientEVENTS(vector<string> splited_message, Client* recvClient);
+	void clientMSG(vector<string> splited_message, Client* recvClient);
 
 
-private:
+
 
 	int isBot(string message,Client *recvClient)
 	{
@@ -82,6 +91,7 @@ private:
 			recvClient->_state = STATE_BOT;
 			recvClient->_isRegistered = 1;
 			cout << "BOT Activated" << endl;
+			bot_fd = recvClient->_sockFD;
 			return 1;
 		}
 		return 0;

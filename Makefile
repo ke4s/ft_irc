@@ -2,7 +2,7 @@ NAME = ircserv
 
 C++ = c++
 
-FLAGS = -Wall -Werror -Wextra -std=c++98
+FLAGS = -std=c++98
 
 SRC_SERV =	main.cpp \
 			Sources/Server/Server.Connection.cpp \
@@ -24,10 +24,10 @@ SRC_BOT =	BotResources/main.cpp \
 all:	$(SRC_SERV) $(SRC_BOT) ircserv bot
 
 ircserv:	$(SRC_SERV)
-	c++ $(SRC_SERV) -o ircserv
+	$(C++) $(FLAGS) $(SRC_SERV) -o ircserv
 
 bot:	$(SRC_BOT)
-	c++ $(SRC_BOT) -o bot
+	$(C++) $(FLAGS) $(SRC_BOT) -o bot
 
 
 clean :

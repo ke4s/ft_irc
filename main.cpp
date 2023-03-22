@@ -1,5 +1,3 @@
-
-#include <string.h>
 #include <iostream>
 
 
@@ -136,16 +134,67 @@ short  revents;  // events returned
  */
 
 
+int isPortNumber(char *str)
+{
+	for (int i = 0; str[i] ; ++i) {
+		if (!isdigit(str[i]))
+			return 0;
+	}
+
+	int port = atoi(str);
+	if (port > 1024 && port < 65535)
+		return 1;
+	return 0;
+
+
+}
+
+int isStrPrintable(char *str)
+{
+	if (str[0] == '\0')
+		return 0;
+	for (int i = 0; str[i] ; ++i)
+	{
+		if (!isprint(str[i]) || str[i] == ' ')
+			return 0;
+	}
+	return 1;
+}
+
+bool checkArgs(int ac, char **argv)
+{
+	bool is_correct = true;
+
+	if (ac != 3)
+	{
+		cout << "[PORT]  [PASSWORD]" << endl;
+		return false;
+	}
+
+	if (isPortNumber(argv[1]) == 0)
+	{
+		cout << "Port number must be integer and between 1024 and 65535" << endl;
+		is_correct = false;
+	}
+	if (isStrPrintable(argv[2]) == 0)
+	{
+		cout << "Password must exist printable characters." << endl;
+		is_correct = false;
+	}
+
+	if (!is_correct)
+		return false;
+	return true;
+}
 
 int main(int ac, char **argv)
 {
-	//argcheck
-
+	if (!checkArgs(ac, argv))
+		return -1;
 	try
 	{
 		char banFile[] = "bannedIPS.txt";
 		Server server(atoi(argv[1]), argv[2], banFile);
-
 		server.binding();
 		server.listenSock(5);
 		server.acceptingRequest();

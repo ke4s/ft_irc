@@ -14,12 +14,14 @@ Server::Server(const int port, const string password, char *ban_file_name) : ser
 		throw std::runtime_error("Error while setting socket to NON-BLOCKING.");
 
 	server_attr.sin_family = AF_INET; //IPV4
-	server_attr.sin_addr.s_addr = inet_addr("10.11.33.3"); //inet_addr("10.11.41.5");//bu tanım bulunduğu bilgisayarın ip adresini almasını söyler //inet_addr("127.0.0.1"); // htonl(INADDR_ANY)  INADDR_ANY sabitinin mesela 12 olarak belirlendiği durumlarda işe yarar.
+	server_attr.sin_addr.s_addr = htonl(INADDR_ANY); //inet_addr("10.11.41.5");//bu tanım bulunduğu bilgisayarın ip adresini almasını söyler //inet_addr("127.0.0.1"); // htonl(INADDR_ANY)  INADDR_ANY sabitinin mesela 12 olarak belirlendiği durumlarda işe yarar.
 	std::cout << port << password << "\n";
 	server_attr.sin_port = htons(port);
 	this->password = password;
 
 	pollfds.push_back(newPollfd(serverSockFD, POLL_IN, 0));
+
+	serverBotPassword = randomStringGenerator(64);
 }
 
 //   Server::
@@ -46,6 +48,9 @@ void Server::acceptingRequest()
 {
 	//server is ready.
 	cout << "Server is ready" << endl;
+	cout << "Bot connecting password:" << serverBotPassword << endl;
+	cout << "Dont share to anyone the bot password" << endl << endl;
+
 	while (1) // running değişkeni kullan
 	{
 
@@ -72,5 +77,4 @@ void Server::acceptingRequest()
 			}
 		}
 	}
-
 }

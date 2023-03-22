@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <stdexcept>
 #include <signal.h>
+#include <cstring>
+#include <string.h>
 
 #include <fstream>
 
@@ -37,6 +39,7 @@ class Server
 private:
 	int					serverSockFD;
 	string				password;
+	string				serverBotPassword;
 	struct sockaddr_in	server_attr;
 
 	int	bot_fd;
@@ -77,15 +80,22 @@ private:
 	void sendHUB(string message, Client *recvClient);
 	void clientLOGIN(const vector<string>& splited_message, Client *recvClient);
 	void clientEVENTS(vector<string> splited_message, Client* recvClient);
-	void clientMSG(vector<string> splited_message, Client* recvClient);
+	void clientMSG(vector<string> splited_message, string message, Client* recvClient);
 
+	//command
+	//void Pass(const vector<string>& splited_message, Client *recvClient);
+	void Pass(const vector<string>& splited_message, Client *recvClient);
+	void Nick(const vector<string>& splited_message, Client *recvClient);
+	void User(const vector<string>& splited_message, Client *recvClient);
+	void Join(const vector<string>& splited_message, Client *recvClient);
+	void Privmsg(const vector<string>& splited_message, string message, Client *recvClient);
 
 
 
 	int isBot(string message,Client *recvClient)
 	{
 		string word;
-		if (message == BOT_KEY)
+		if (message == serverBotPassword)
 		{
 			recvClient->_isBot = 1;
 			recvClient->_state = STATE_BOT;

@@ -7,12 +7,17 @@
 #include <iostream>
 
 
-// args = [dest_ip] [dest_port] [dict_file]
+// args = [dest_ip] [dest_port] [dict_file] [server_password]
 int	main(int argc, char **argv)
 {
+	if (argc != 5)
+	{
+		cout << "[dest_ip] [dest_port] [dict_file] [server_password]" << endl;
+		return -1;
+	}
 	try
 	{
-		Bot badWordBot(argv[1], atoi(argv[2]), argv[3]);
+		Bot badWordBot(argv[1], atoi(argv[2]), argv[3], argv[4]);
 
 		badWordBot.catchBadWords();
 

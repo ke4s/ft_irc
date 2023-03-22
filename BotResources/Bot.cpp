@@ -1,7 +1,7 @@
 #include "Bot.hpp"
 
 
-Bot::Bot(char *dest_ip, int dest_port, char *dict_file) : sockATTR(), ircServATTR(), destIp(dest_ip), destPort(dest_port), dictionary(dict_file)
+Bot::Bot(char *dest_ip, int dest_port, char *dict_file, char *server_password) : sockATTR(), ircServATTR(), destIp(dest_ip), destPort(dest_port), dictionary(dict_file)
 {
 	if ((sockFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) // IPV4 TCP özelliklerine sahip socket oluşturuldu.
 		throw std::runtime_error(strerror(errno));
@@ -19,7 +19,7 @@ Bot::Bot(char *dest_ip, int dest_port, char *dict_file) : sockATTR(), ircServATT
 
 	if (connect(sockFD, reinterpret_cast<sockaddr *>(&ircServATTR), sizeof(ircServATTR)) < 0)
 		throw std::runtime_error(strerror(errno));
-	if (send(sockFD, BOT_KEY, ::strlen(BOT_KEY), 0) < 0)
+	if (send(sockFD, server_password, ::strlen(server_password), 0) < 0)
 		throw std::runtime_error("send error");
 }
 
@@ -50,6 +50,14 @@ std::string Bot::checkWordsInFile(string file_name, string sentence)
 {
 	string word;
 	ifstream file(file_name);
+
+	if (!file)
+	{
+		(ofstream (file_name)).close();
+		file.close();
+		file.open(file_name);
+	}
+
 	if (file.is_open())
 	{
 		while (!file.eof())

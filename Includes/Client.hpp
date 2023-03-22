@@ -36,6 +36,7 @@ public:
 	short int	_state;
 	bool		_isRegistered;
 	bool		_isBot;
+	string		_messBuff;
 
 	map<string, Channel*>	joinedChannels;
 
@@ -49,6 +50,7 @@ public:
 		_nickName = "";
 		_fullName = "";
 		_password = "";
+		_messBuff = "";
 		_isBot = false;
 	}
 
@@ -60,4 +62,19 @@ public:
 	const struct sockaddr_in& getATTR(void)
 	{ return _sockATTR; }
 
+	void clearMessBuff()
+	{
+		_messBuff.clear();
+		_messBuff = "";
+	}
+
+	void appendMessBuff(const string& mess)
+	{
+		_messBuff.append(mess);
+	}
+
+	const string& getMessBuff(void)
+	{
+		return _messBuff;
+	}
 };

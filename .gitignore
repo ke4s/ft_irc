@@ -4,3 +4,7 @@ main.dSYM
 ircserv
 .DS_Store
 .idea
+.gitignore
+bot
+ircserv
+.vscode

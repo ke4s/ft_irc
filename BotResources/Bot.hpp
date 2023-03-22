@@ -34,7 +34,7 @@ private:
 	
 public:
 
-	Bot(char *dest_ip, int dest_port, char *dict_file);
+	Bot(char *dest_ip, int dest_port, char *dict_file, char* server_password);
 
 	void catchBadWords();
 
